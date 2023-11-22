@@ -1,6 +1,8 @@
 package baseball.view.parser.validator;
 
-import static baseball.view.constant.InputNumberConstant.BASEBALL_INPUT_NUMBER;
+import static baseball.view.constant.input.InputNumberConstant.BASEBALL_INPUT_NUMBER;
+import static baseball.view.exception.message.IoErrorMessage.INVALID_BALLS_LENGTH;
+import static baseball.view.exception.message.IoErrorMessage.NOT_NUMERIC_TYPE;
 
 public class UserNumbersInputValidator {
     public void validate(String userNumbersInput) {
@@ -10,7 +12,7 @@ public class UserNumbersInputValidator {
 
     private void checkLength(String userInput) {
         if (userInput.length() != BASEBALL_INPUT_NUMBER.getValue()) {
-            throw new IllegalArgumentException("잘못된 사용자 입력입니다. : 입력의 길이가 " + BASEBALL_INPUT_NUMBER + "이 아닙니다.");
+            throw new IllegalArgumentException(INVALID_BALLS_LENGTH.getMessage());
         }
     }
 
@@ -18,7 +20,7 @@ public class UserNumbersInputValidator {
         try {
             Integer.parseInt(userInput);
         } catch (NumberFormatException ex) {
-            throw new IllegalArgumentException("잘못된 사용자 입력입니다. : 숫자 형식의 입력이 아닙니다.");
+            throw new IllegalArgumentException(NOT_NUMERIC_TYPE.getMessage());
         }
     }
 }

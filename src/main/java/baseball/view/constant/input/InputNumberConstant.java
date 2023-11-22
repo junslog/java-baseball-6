@@ -1,4 +1,4 @@
-package baseball.view.constant;
+package baseball.view.constant.input;
 
 public enum InputNumberConstant {
     BASEBALL_INPUT_NUMBER(3),
@@ -7,7 +7,7 @@ public enum InputNumberConstant {
     RESUME_INPUT_FALSE_VALUE(2);
     private final int value;
 
-    InputNumberConstant(final int value){
+    InputNumberConstant(final int value) {
         this.value = value;
     }
 

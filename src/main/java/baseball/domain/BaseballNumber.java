@@ -7,16 +7,16 @@ import static baseball.domain.exception.message.ErrorMessage.INVALID_NUMBER;
 
 import java.util.Objects;
 
-public class Number {
+public class BaseballNumber {
     private final int number;
 
-    private Number(final int number) {
+    private BaseballNumber(final int number) {
         this.number = number;
     }
 
-    public static Number from(final int number) {
+    public static BaseballNumber from(final int number) {
         validateRange(number);
-        return new Number(number);
+        return new BaseballNumber(number);
     }
 
     private static void validateRange(final int number) {
@@ -33,16 +33,12 @@ public class Number {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Number number1 = (Number) o;
-        return number == number1.number;
+        BaseballNumber baseballNumber = (BaseballNumber) o;
+        return number == baseballNumber.number;
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(number);
-    }
-
-    public int getNumber() {
-        return number;
     }
 }

@@ -2,11 +2,12 @@ package baseball.controller;
 
 
 import baseball.domain.BaseballGameResult;
-import baseball.domain.ComputerBaseballNumber;
-import baseball.domain.ComputerNumbersGenerator;
-import baseball.domain.UserBaseballNumber;
+import baseball.domain.BaseballNumbers;
+import baseball.domain.util.ComputerBallsGenerator;
+import baseball.dto.BaseballGameResultDto;
 import baseball.view.InputView;
 import baseball.view.OutputView;
+import camp.nextstep.edu.missionutils.Console;
 
 public class GameController {
     private final InputView inputView;
@@ -19,23 +20,38 @@ public class GameController {
 
     public void playGame() {
         outputView.printStartGame();
-        do {
-            ComputerBaseballNumber computerBaseballNumber = ComputerBaseballNumber.from(
-                    ComputerNumbersGenerator.generate());
-            outputView.askUserToInsertNumbers();
-            UserBaseballNumber userBaseballNumber = UserBaseballNumber.from(inputView.getUserBaseballNumber());
-            BaseballGameResult baseballGameResult = computerBaseballNumber.makeBaseballGameResult(userBaseballNumber);
-            if (isThreeStrike(baseballGameResult) || !resumeGame()) {
-                break;
-            }
-        } while (true);
+        boolean restartFlag = true;
+        while (restartFlag) {
+            BaseballNumbers computerBalls = BaseballNumbers.createComputerBalls(ComputerBallsGenerator.generate());
+
+            playUntilEndGameCondition(computerBalls);
+
+            outputView.askUserToRestartOrNot();
+            restartFlag = judgeRestartOrNot();
+        }
+        terminateGame();
     }
 
-    private boolean resumeGame() {
+    private void playUntilEndGameCondition(BaseballNumbers computerBalls) {
+        boolean proceedGame = true;
+        while (proceedGame) {
+            outputView.askUserToInsertNumbers();
+            BaseballNumbers userBalls = BaseballNumbers.createUserBalls(inputView.getUserBaseballNumber());
+            BaseballGameResult baseballGameResult = computerBalls.makeBaseballResult(userBalls);
+            outputView.printResult(BaseballGameResultDto.from(baseballGameResult.getBaseballGameResult()));
+            proceedGame = isEndGameCondition(baseballGameResult);
+        }
+    }
+
+    private boolean isEndGameCondition(BaseballGameResult baseballGameResult) {
+        return !baseballGameResult.isThreeStrike();
+    }
+
+    private boolean judgeRestartOrNot() {
         return inputView.getResumeInput();
     }
 
-    private boolean isThreeStrike(BaseballGameResult baseballGameResult) {
-        return baseballGameResult.isThreeStrike();
+    private void terminateGame() {
+        Console.close();
     }
 }

@@ -1,40 +1,67 @@
 package baseball.view;
 
 
+import static baseball.view.constant.output.OutputMessageConstant.INSERT_NUMBERS;
+import static baseball.view.constant.output.OutputMessageConstant.INSERT_RESUME;
+import static baseball.view.constant.output.OutputMessageConstant.START_GAME;
+import static baseball.view.constant.output.OutputNumberConstant.NO_COUNT;
+import static baseball.view.constant.output.OutputSymbolConstant.NOTHING;
+
+import baseball.domain.constant.PitchResult;
+import baseball.dto.BaseballGameResultDto;
+import baseball.view.constant.output.OutputFormatConstant;
+import baseball.view.constant.output.OutputSymbolConstant;
+import java.util.Map;
+
 public class OutputView {
     public void printStartGame() {
-        System.out.println("숫자 야구 게임을 시작합니다.");
+        System.out.print(START_GAME.getMessage());
+        printLine();
     }
 
     public void askUserToInsertNumbers() {
-        System.out.print("숫자를 입력해주세요 : ");
+        System.out.print(INSERT_NUMBERS.getMessage());
     }
 
-    public void askUserToResumeOrNot() {
-        System.out.println("3개의 숫자를 모두 맞추셨습니다! 게임 종료\n게임을 새로 시작하려면 1, 종료하려면 2를 입력하세요.");
+    public void askUserToRestartOrNot() {
+        System.out.println(INSERT_RESUME.getMessage());
     }
 
-    public void print() {
-        int strikeCount = baseballGameResult.get("strike");
-        int ballCount = baseballGameResult.get("ball");
+    public void printResult(BaseballGameResultDto baseballGameResultDto) {
+        Map<PitchResult, Integer> baseballGameResult = baseballGameResultDto.getBaseballGameResult();
+        int strikeCount = baseballGameResult.get(PitchResult.STRIKE);
+        int ballCount = baseballGameResult.get(PitchResult.BALL);
         printStrikeAndBall(strikeCount, ballCount);
+        printLine();
     }
 
-    private void printStrikeAndBall(int strikeCount, int ballCount) {
-        if (strikeCount == 0 && ballCount == 0) {
-            System.out.println("낫싱");
+    private void printStrikeAndBall(final int strikeCount, final int ballCount) {
+        if (strikeCount == NO_COUNT.getNumber() && ballCount == NO_COUNT.getNumber()) {
+            print(NOTHING.getSymbol());
             return;
         }
-        if (strikeCount == 0) {
-            System.out.println(ballCount + "볼");
+        if (strikeCount == NO_COUNT.getNumber()) {
+            printFormat((OutputFormatConstant.ONLY_BALLS.getFormat()), ballCount);
             return;
         }
-        if (ballCount == 0) {
-            System.out.println(strikeCount + "스트라이크");
+        if (ballCount == NO_COUNT.getNumber()) {
+            printFormat(OutputFormatConstant.ONLY_STRIKES.getFormat(), strikeCount);
             return;
         }
-        if (ballCount > 0 && strikeCount > 0) {
-            System.out.println(ballCount + "볼 " + strikeCount + "스트라이크");
+        if (ballCount > NO_COUNT.getNumber() && strikeCount > NO_COUNT.getNumber()) {
+            printFormat(OutputFormatConstant.BALLS_AND_STRIKES.getFormat(), ballCount, strikeCount);
         }
+    }
+
+    private void print(final String message) {
+        System.out.print(message);
+    }
+
+    private void printLine() {
+        print(OutputSymbolConstant.NEW_LINE.getSymbol());
+    }
+
+    private void printFormat(final String format, Object... args) {
+        System.out.printf(format, args);
     }
 }
